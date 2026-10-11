@@ -1,8 +1,10 @@
-
 const User = require("../models/users"); 
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 
+
+//signup route
 router.post("/signup", async (req, res) => {
     try {
         const { username, email, password, address } = req.body;
@@ -24,11 +26,11 @@ router.post("/signup", async (req, res) => {
         if (!password || password.length < 6) {
             return res.status(400).json({ message: "Password Too Short" });
         }
-
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             username: username,
             email: email,
-            password: password,
+            password: hashedPassword,
             address: address,
         });
 
@@ -41,5 +43,31 @@ router.post("/signup", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+
+// signin route
+
+router.post("/signin", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        res.status(200).json({ message: "Signin successful" });
+    }
+    catch (error) {
+        console.error("Error during signin:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 
 module.exports = router;

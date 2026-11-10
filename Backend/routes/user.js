@@ -82,8 +82,20 @@ router.post("/signin", async (req, res) => {
 router.get("/userData", authanticateToken, async (req, res) => {
     try {
         const {id} = req.headers;
-        const data = await User.findById(id);
+        const data = await User.findById(id).select('-password');
         return res.status(200).json({data})
+    }
+    catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.put("updateUser", authanticateToken, async (req, res) => {
+    try {
+        const {id} = req.headers;
+        const {username, email, address, avatar} = req.body;
+        const updatedData = await User.findByIdAndUpdate(id, {username, email, address, avatar}, {new: true}).select('-password');
+        return res.status(200).json({message: "User updated successfully", data: updatedData})
     }
     catch (error) {
         res.status(500).json({ message: "Internal server error" });

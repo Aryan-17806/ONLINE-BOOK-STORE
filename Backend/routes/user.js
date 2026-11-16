@@ -94,7 +94,7 @@ router.put("updateUser", authanticateToken, async (req, res) => {
     try {
         const {id} = req.headers;
         const {username, email, address, avatar} = req.body;
-        const updatedData = await User.findByIdAndUpdate(id, {username, email, address, avatar}, {new: true}).select('-password');
+        const updatedData = await User.findByIdAndUpdate(id, {username, email, address, avatar}, {new: true});
         return res.status(200).json({message: "User updated successfully", data: updatedData})
     }
     catch (error) {

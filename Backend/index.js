@@ -2,6 +2,7 @@ const express = require("express");
 // require("dotenv").config();
 const connectDB = require("./connection/connection");
 const user = require("./routes/user");
+const Book = require("./routes/book");
 const app = express();
 
 const PORT = 3000;
@@ -12,6 +13,7 @@ app.get("/", (req, res) => {
 
 app.use(express.json());
 app.use("/api", user);
+app.use("/api", Book);
 
 connectDB();
 app.listen(PORT, () => {

@@ -3,7 +3,7 @@ const express = require("express");
 const connectDB = require("./connection/connection");
 const user = require("./routes/user");
 const Book = require("./routes/book");
-const favourite = require("./routes/favourite");
+const Favourite = require("./routes/favourite");
 const app = express();
 
 const PORT = 3000;
@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
 app.use(express.json());
 app.use("/api", user);
 app.use("/api", Book);
-app.use("/api", favourite);
+app.use("/api", Favourite);
 
 connectDB();
 app.listen(PORT, () => {

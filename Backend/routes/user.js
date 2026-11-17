@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
-const {authanticateToken}  = require("./userAuth");
+const { authanticateToken } = require("./userAuth");
 
 //signup route
 router.post("/signup", async (req, res) => {
@@ -57,20 +57,24 @@ router.post("/signin", async (req, res) => {
             return res.status(400).json({ message: "Invalid email or password" });
         }
 
-        await bcrypt.compare(password, user.password, (err, data) => {
-            if (data) {
-                const authClaims = [
-                    { username: user.username },
-                    { email: user.email },
-                    { role: user.role }
-                ];
-                const token = jwt.sign({authClaims},"Aryan1786", { expiresIn: '1h' });
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
 
-                res.status(200).json({id: user._id, username: user.username,role: user.role, token: token });
-            }
-            else {
-                res.status(400).json({ message: "Invalid email or password" });
-            }
+        const authClaims = [
+            { username: user.username },
+            { email: user.email },
+            { role: user.role }
+        ];
+
+        const token = jwt.sign({ authClaims }, "Aryan1786", { expiresIn: '1h' });
+
+        res.status(200).json({
+            id: user._id,
+            username: user.username,
+            role: user.role,
+            token: token
         });
     }
     catch (error) {
@@ -81,21 +85,21 @@ router.post("/signin", async (req, res) => {
 
 router.get("/userData", authanticateToken, async (req, res) => {
     try {
-        const {id} = req.headers;
+        const { id } = req.headers;
         const data = await User.findById(id).select('-password');
-        return res.status(200).json({data})
+        return res.status(200).json({ data });
     }
     catch (error) {
         res.status(500).json({ message: "Internal server error" });
     }
 });
 
-router.put("updateUser", authanticateToken, async (req, res) => {
+router.put("/updateUser", authanticateToken, async (req, res) => {
     try {
-        const {id} = req.headers;
-        const {username, email, address, avatar} = req.body;
-        const updatedData = await User.findByIdAndUpdate(id, {username, email, address, avatar}, {new: true});
-        return res.status(200).json({message: "User updated successfully", data: updatedData})
+        const { id } = req.headers;
+        const { username, email, address, avatar } = req.body;
+        const updatedData = await User.findByIdAndUpdate(id, { username, email, address, avatar }, { new: true });
+        return res.status(200).json({ message: "User updated successfully", data: updatedData });
     }
     catch (error) {
         res.status(500).json({ message: "Internal server error" });

@@ -9,7 +9,7 @@ const book = new mongoose.Schema({
         type: String,
         required: true,
     },
-    auther: {
+    author: {
         type: String,
         required: true,
     },
@@ -21,7 +21,7 @@ const book = new mongoose.Schema({
         type: String,
         required: true,
     },
-    Language: {
+    language: {
         type: String,
         required: true,
     },
@@ -29,4 +29,5 @@ const book = new mongoose.Schema({
 {
     timestamps: true,
 });
+
 module.exports = mongoose.model("books", book);

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Book = require("../models/book");
-const User = require("../models/user");
+const User = require("../models/users");
 const { authanticateToken } = require("./userAuth");
 
 // ADD BOOK
@@ -24,7 +24,7 @@ router.post("/addBook", authanticateToken, async (req, res) => {
             url: req.body.url,
             title: req.body.title,
             author: req.body.author,
-            desc: req.body.description,
+            description: req.body.description,
             price: req.body.price,
             language: req.body.language,
         });
@@ -60,7 +60,7 @@ router.put("/updateBook", authanticateToken, async (req, res) => {
                 url: req.body.url,
                 title: req.body.title,
                 author: req.body.author,
-                desc: req.body.description,
+                description: req.body.description,
                 price: req.body.price,
                 language: req.body.language,
             },

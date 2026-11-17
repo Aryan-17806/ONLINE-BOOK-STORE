@@ -23,26 +23,24 @@ const user = new mongoose.Schema({
         type: String,
         default: "https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-High-Quality-Image.png",
     },
-    role:[
-        {
-            type: String,
-            default: "user",
-            enum: ["user", "admin"]
-        },
-    ],
-    favourites:[
+    role: {
+        type: String,
+        default: "user",
+        enum: ["user", "admin"],
+    },
+    favourites: [
         {
             type: mongoose.Types.ObjectId,
             ref: "books",
         },
     ],
-    cart:[
+    cart: [
         {
             type: mongoose.Types.ObjectId,
             ref: "books",
         },
     ],
-    order:[
+    order: [
         {
             type: mongoose.Types.ObjectId,
             ref: "order",
@@ -52,4 +50,5 @@ const user = new mongoose.Schema({
 {
     timestamps: true,
 });
+
 module.exports = mongoose.model("users", user);

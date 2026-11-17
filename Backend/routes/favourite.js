@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { authanticateToken } = require("./userAuth");
-const User = require("../models/user");
+const User = require("../models/users");
 
 router.put("/addToFavourite", authanticateToken, async (req, res) => {
     try {
@@ -14,8 +14,8 @@ router.put("/addToFavourite", authanticateToken, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const isBookInFavourite = userData.favouriteBooks.some(
-            (id) => id.toString() === bookid
+        const isBookInFavourite = userData.favourites.some(
+            (favId) => favId.toString() === bookid
         );
 
         if (isBookInFavourite) {
@@ -25,7 +25,7 @@ router.put("/addToFavourite", authanticateToken, async (req, res) => {
         }
 
         await User.findByIdAndUpdate(id, {
-            $push: { favouriteBooks: bookid }
+            $push: { favourites: bookid }
         });
 
         res.status(200).json({
@@ -49,8 +49,8 @@ router.delete("/removeFromFavourite", authanticateToken, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const isBookInFavourite = userData.favouriteBooks.some(
-            (id) => id.toString() === bookid
+        const isBookInFavourite = userData.favourites.some(
+            (favId) => favId.toString() === bookid
         );
 
         if (!isBookInFavourite) {
@@ -60,7 +60,7 @@ router.delete("/removeFromFavourite", authanticateToken, async (req, res) => {
         }
 
         await User.findByIdAndUpdate(id, {
-            $pull: { favouriteBooks: bookid }
+            $pull: { favourites: bookid }
         });
 
         res.status(200).json({
@@ -79,7 +79,7 @@ router.get("/getFavouriteBooks", authanticateToken, async (req, res) => {
         const { id } = req.headers;
 
         const userData = await User.findById(id)
-            .populate("favouriteBooks");
+            .populate("favourites");
 
         if (!userData) {
             return res.status(404).json({ message: "User not found" });
@@ -87,7 +87,7 @@ router.get("/getFavouriteBooks", authanticateToken, async (req, res) => {
 
         return res.status(200).json({
             status: "success",
-            data: userData.favouriteBooks
+            data: userData.favourites
         });
 
     } catch (error) {
